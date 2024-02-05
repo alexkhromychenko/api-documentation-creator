@@ -53,7 +53,7 @@ If command output returns {NO_OUTPUT} just use class name for documentation skip
         response = client.chat.completions.create(
             model="gpt-4",
             messages=conversation,
-            temperature=0.3,
+            temperature=0.7,
             max_tokens=500,
             top_p=1
         )
