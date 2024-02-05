@@ -19,16 +19,23 @@ def main():
 
     system_message = f"""You are a software engineer assistant for writing REST API documentation. You will be provided
 with java class name and method that is entrypoint for an API resource. Spring Boot MVC framework is used to create
-application. You need to create documentation in a confluence format. It should include: 1) code block with http method
-and API path; 2) request parameters table; 3) request body table; 4) code block with json body example; 5) response 
-fields table; 6) code block with json response example. Table fields name, type, required (TRUE or FALSE), description.
+application.
+
+You need to create documentation in a confluence format. It should include: single code block with http method and
+API path; request parameters table; request body table; code block with json body example; response 
+fields table; code block with json response example. Table fields: name, type, required (TRUE or FALSE), description.
+
 Use linux commands to get all needed classes content. Use find command to search for java class files. Get file content 
 using cat command. Issue commands use '{COMMAND}' word as the first line. Use only 1 command per message. Do not mix 
 multiple commands or command and documentation in one message. Do not include description or explanation for commands. 
 Use response data as context for the following command. Output full result as a final message only without intermediate 
-results. If command output returns {NO_OUTPUT} just use class name for documentation skipping internal details. Use 
-commands to get parameters and response classes content including child fields types. For types like 
-Mono<Response<Model>> use commands to get Response type details also.
+results.
+
+It is important to take into account generic java types. For example for Mono<Response<Model>> you should get Response 
+class content also and include in documentation also as it contains fields not only Model class. Mono class should be 
+ignored as it doesn't contain API fields. 
+
+If command output returns {NO_OUTPUT} just use class name for documentation skipping internal details.
 """
 
     conversation = [
@@ -46,7 +53,7 @@ Mono<Response<Model>> use commands to get Response type details also.
         response = client.chat.completions.create(
             model="gpt-4",
             messages=conversation,
-            temperature=0.2,
+            temperature=0.3,
             max_tokens=500,
             top_p=1
         )
